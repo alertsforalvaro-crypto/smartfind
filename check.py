@@ -13,23 +13,28 @@ EMAILPASS = os.getenv("EMAILPASS")
 LOGIN_URL = "https://hrsubsfresnounified.eschoolsolutions.com/logOnInitAction.do"
 
 
+import requests
+
 def send_email():
     try:
-        msg = EmailMessage()
-        msg["Subject"] = "🚨 Jobs Available on SmartFind"
-        msg["From"] = EMAILNAME
-        msg["To"] = EMAILNAME  # send to yourself
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {os.getenv('RESEND_API_KEY')}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": "onboarding@resend.dev",
+                "to": "alvaromagdaleno531@gmail.com",
+                "subject": "Jobs Available on SmartFind",
+                "html": "<strong>Jobs are available on SmartFind. Log in now.</strong>",
+            },
+        )
 
-        msg.set_content("Jobs are available on SmartFind. Log in immediately.")
-
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-            smtp.login(EMAILNAME, EMAILPASS)
-            smtp.send_message(msg)
-
-        print("📧 Email sent successfully.")
+        print("Email response:", response.status_code, response.text)
 
     except Exception as e:
-        print(f"Email error: {e}")
+        print("Email error:", e)
 
 
 def check_for_jobs():
@@ -102,4 +107,5 @@ while True:
         print(f"Unexpected error: {e}")
 
     print("⏳ Sleeping 120 seconds...\n")
+
     time.sleep(120)
