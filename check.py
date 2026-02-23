@@ -108,4 +108,5 @@ while True:
 
     print("⏳ Sleeping 120 seconds...\n")
 
-    time.sleep(120)
+    time.sleep(90)
+
